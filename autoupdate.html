@@ -1,0 +1,46 @@
+<script>
+    launch();
+
+    function launch() {
+      try {
+        fetch("https://cdn.jsdelivr.net/gh/freebuisness/gn-math-DONTDMCA@main/singlefile.html?t="+Date.now())
+          .then(response => response.text())
+          .then(html => {
+                // Strip ad/tracking scripts before injecting
+                const AD_DOMAINS = ['aclib','googletagmanager','eduplace','breadisgay','invoke.js','adsbygoogle','pagead','popads','exoclick','propellerads','googlesyndication'];
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                doc.querySelectorAll('script').forEach(s => {
+                  const src = s.src || s.textContent || '';
+                  if (AD_DOMAINS.some(d => src.includes(d))) s.remove();
+                });
+                const cleanHtml = doc.documentElement.outerHTML;
+
+                document.documentElement.innerHTML = cleanHtml;
+
+                // Block window.open popups immediately
+                window.open = function(url, t, f) {
+                  if (!url || url === "about:blank") {
+                    return window._origOpen ? window._origOpen(url, t, f) : null;
+                  }
+                  return null;
+                };
+
+                document.documentElement.querySelectorAll('script').forEach(oldScript => {
+                    const src = oldScript.src || oldScript.textContent || '';
+                    const isAd = AD_DOMAINS.some(d => src.includes(d));
+                    if (isAd) return;
+                    const newScript = document.createElement('script');
+                    if (oldScript.src) {
+                        newScript.src = oldScript.src;
+                    } else {
+                        newScript.textContent = oldScript.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+          });
+      } catch (error) {
+        console.error('error:', error);
+      }
+    }
+</script>

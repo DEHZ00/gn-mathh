@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="https://cdn.jsdelivr.net/gh/freebuisness/gn-math-DONTDMCA@main/">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Games</title>
+  <style>
+    :root {
+      --primary: #ff2c2c;
+      --primary-hover: #e01f1f;
+      --primary-light: rgba(255,44,44,0.1);
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --bg: #050303;
+      --bg-secondary: #0d0808;
+      --surface: #120404;
+      --surface-hover: #1a0505;
+      --border: #2a0a0a;
+      --border-light: #1f0707;
+      --glass: rgba(20,2,2,0.8);
+      --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.5);
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.5);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.6);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.7);
+      --shadow-glow: 0 0 20px rgba(255,44,44,0.3);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --radius-lg: 16px;
+      --gradient-primary: linear-gradient(135deg, #ff2c2c 0%, #cc0000 100%);
+      --gradient-surface: linear-gradient(135deg, #120404 0%, #0d0808 100%);
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6; margin: 0; padding: 0;
+      background: var(--bg); color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+    header {
+      background: var(--gradient-primary);
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: var(--shadow-lg);
+    }
+    .header-content {
+      max-width: 1200px; margin: 0 auto;
+      padding: 1rem 1.25rem;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 1.5rem;
+    }
+    .logo {
+      font-size: 1.5rem; font-weight: 900;
+      letter-spacing: -0.5px; color: #fff;
+      text-decoration: none;
+    }
+    .logo span { opacity: 0.7; font-weight: 400; font-size: 1rem; margin-left: 6px; }
+    .search-container { display: flex; flex: 1; max-width: 500px; gap: 0.75rem; }
+    #searchBar {
+      flex: 1; padding: 0.75rem 1rem;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.1);
+      color: #fff; font-size: 14px; outline: none;
+      transition: all 0.2s;
+    }
+    #searchBar:focus { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.35); }
+    #searchBar::placeholder { color: rgba(255,255,255,0.6); }
+    #sortOptions, #filterOptions {
+      padding: 0.75rem 1rem;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.1);
+      color: #fff; font-size: 14px; cursor: pointer; outline: none;
+      transition: all 0.2s; min-width: 120px;
+    }
+    #sortOptions:hover, #filterOptions:hover { background: rgba(255,255,255,0.18); }
+    #sortOptions option, #filterOptions option { background: #1a0505; color: #fff; }
+    .control-buttons { display: flex; gap: 0.5rem; }
+    .control-buttons button {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white; cursor: pointer; padding: 0;
+      width: 40px; height: 40px; border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .control-buttons button:hover { background: rgba(255,255,255,0.2); }
+    .control-button img { width: 20px; height: 20px; transition: transform 0.4s ease; }
+    .control-button:hover img { transform: rotate(40deg); }
+    main { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1.25rem 6rem; }
+    details > summary {
+      font-size: 1.1rem; font-weight: 800; cursor: pointer;
+      color: #fff; padding: 4px 0; letter-spacing: -0.2px;
+      list-style: none; display: flex; align-items: center; gap: 8px;
+    }
+    details > summary::before {
+      content: '';
+      display: inline-block; width: 4px; height: 18px;
+      background: var(--primary); border-radius: 99px; flex-shrink: 0;
+    }
+    hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+    #container, #featuredZones {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.25rem; margin-top: 1rem;
+    }
+    .zone-item {
+      background: var(--gradient-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden; cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      display: flex; flex-direction: column;
+      position: relative; box-shadow: var(--shadow-sm);
+    }
+    .zone-item:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--primary);
+    }
+    .zone-item::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--primary-light); opacity: 0;
+      transition: opacity 0.3s ease; pointer-events: none; z-index: 1;
+    }
+    .zone-item:hover::before { opacity: 1; }
+    .zone-item img {
+      width: 100%; aspect-ratio: 1; object-fit: cover; display: block;
+      background: var(--border-light);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .zone-item:hover img { transform: scale(1.05); }
+    .zone-item button {
+      background: transparent; color: var(--text);
+      border: 0; padding: 1rem 0.75rem;
+      cursor: pointer; font-weight: 600; font-size: 13px;
+      line-height: 1.4; text-align: center;
+      transition: all 0.2s; min-height: 60px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; z-index: 2;
+    }
+    .zone-item:hover button { color: var(--primary); }
+    #zoneViewer {
+      position: fixed; inset: 0; background: #000;
+      z-index: 1000; display: none; flex-direction: column;
+      animation: slideInUp 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    @keyframes slideInUp {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+    .zone-header {
+      background: var(--gradient-primary); color: white;
+      padding: 0.4rem 1.25rem;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-lg); flex-shrink: 0;
+    }
+    .zone-title { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; }
+    #zoneName { font-size: 1.1rem; font-weight: 700; margin: 0; line-height: 1.3; }
+    #zoneId { display: none; }
+    #zoneAuthor {
+      font-size: 13px; color: rgba(255,255,255,0.7);
+      text-decoration: none; font-weight: 500;
+    }
+    #zoneAuthor:hover { color: white; text-decoration: underline; }
+    .zone-controls { display: flex; gap: 0.5rem; }
+    .zone-controls button {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: white; padding: 0.5rem 0.875rem;
+      border-radius: var(--radius); cursor: pointer;
+      font-size: 13px; font-weight: 600;
+      transition: all 0.2s;
+    }
+    .zone-controls button:hover { background: rgba(255,255,255,0.2); }
+    #zoneFrame { flex-grow: 1; border: none; width: 100%; height: 100%; }
+    #popupOverlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 2000; padding: 1rem;
+    }
+    .popup {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-xl);
+      width: 100%; max-width: 500px; max-height: 80vh;
+      overflow: hidden; display: flex; flex-direction: column;
+    }
+    .popup-header {
+      background: var(--gradient-primary); color: white;
+      padding: 1rem 1.25rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    #popupTitle { margin: 0; font-size: 1.1rem; font-weight: 700; }
+    #popupClose {
+      background: rgba(255,255,255,0.1); border: 0; color: white;
+      font-size: 1.1rem; cursor: pointer; padding: 0.4rem;
+      border-radius: var(--radius); width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    #popupClose:hover { background: rgba(255,255,255,0.2); }
+    #popupBody { padding: 1.25rem; overflow-y: auto; color: var(--text); }
+    #popupBody input[type="text"] {
+      width: 100%; padding: 0.75rem 1rem; margin-bottom: 1rem;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--bg-secondary); color: var(--text);
+      font-size: 14px; outline: none; transition: border-color 0.15s;
+    }
+    #popupBody input[type="text"]:focus { border-color: var(--primary); }
+    footer {
+      background: var(--bg-secondary); border-top: 1px solid var(--border);
+      padding: 0.875rem 1rem; text-align: center;
+      position: fixed; bottom: 0; left: 0; width: 100%; z-index: 100;
+    }
+    .footer-links { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+    .footer-links a {
+      color: var(--primary); text-decoration: none;
+      font-weight: 600; font-size: 14px;
+      padding: 0.4rem 0.875rem; border-radius: var(--radius);
+      transition: all 0.15s;
+    }
+    .footer-links a:hover { background: var(--primary-light); }
+    .settings-button {
+      background: var(--gradient-primary); color: white;
+      border: 0; padding: 0.75rem 1.25rem; font-size: 14px;
+      font-weight: 600; border-radius: var(--radius); cursor: pointer;
+      transition: all 0.2s; width: 100%; text-align: center; margin-bottom: 0.75rem;
+    }
+    .settings-button:hover { opacity: 0.9; transform: translateY(-1px); }
+    .info-button {
+      background: none; border: none; cursor: pointer; padding: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: 50%;
+      transition: background-color 0.2s; color: rgba(255,255,255,0.7);
+    }
+    .info-button:hover { background-color: rgba(255,255,255,0.15); color: #fff; }
+    @media (max-width: 768px) {
+      .header-content { flex-direction: column; gap: 0.875rem; padding: 0.875rem 1rem; }
+      .search-container { width: 100%; max-width: none; }
+      #container, #featuredZones { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
+      .zone-controls button { padding: 0.4rem 0.6rem; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">Games <span>via CineRealm</span></div>
+      <div class="search-container">
+        <input type="text" id="searchBar" placeholder="Search games..." oninput="filterZones()">
+        <select id="sortOptions" onchange="sortZones()">
+          <option value="name">Name</option>
+          <option value="id">Date Added</option>
+          <option value="popular">Most Popular</option>
+          <option value="trendingDay">Trending Today</option>
+          <option value="trendingWeek">Trending Week</option>
+          <option value="trendingMonth">Trending Month</option>
+        </select>
+        <select id="filterOptions" onchange="filterZones2()">
+          <option value="none">All Tags</option>
+        </select>
+      </div>
+      <div class="control-buttons">
+        <button id="refresh" class="control-button" title="Refresh" onclick="listZones()">
+          <img src="refresh-icon.png" alt="refresh">
+        </button>
+        <button id="settings" class="control-button" title="Settings">
+          <img src="setting.png" alt="settings">
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <details id="featuredZonesWrapper" open>
+      <summary id="allZonesSummary">Featured Games</summary>
+      <div id="featuredZones"></div>
+    </details>
+    <br><hr><br>
+    <details id="allZonesWrapper" open>
+      <summary id="allSummary">All Games</summary>
+      <div id="container">Loading...</div>
+    </details>
+  </main>
+
+  <div id="zoneViewer">
+    <div class="zone-header">
+      <div class="zone-title">
+        <h2 id="zoneName">Game</h2>
+        <button class="info-button" onclick="showZoneInfo()" title="Game Info">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+        </button>
+        <span id="zoneId" style="display:none;"></span>
+        <a id="zoneAuthor" href="#" target="_blank"></a>
+      </div>
+      <div class="zone-controls">
+        <button onclick="fullscreenZone()">Fullscreen</button>
+        <button onclick="aboutBlank()">New Tab</button>
+        <button onclick="closeZone()">✕ Close</button>
+      </div>
+    </div>
+    <iframe id="zoneFrame"></iframe>
+  </div>
+
+  <div id="popupOverlay">
+    <div class="popup">
+      <div class="popup-header">
+        <h3 id="popupTitle">Settings</h3>
+        <button id="popupClose" onclick="closePopup()">×</button>
+      </div>
+      <div id="popupBody"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-links">
+      <a href="https://cinerealm.online" target="_blank">Back to CineRealm</a>
+      <a href="#" onclick="loadDMCA(); return false;">DMCA</a>
+    </div>
+  </footer>
+
+  <script>
+const container = document.getElementById('container');
+const zoneViewer = document.getElementById('zoneViewer');
+let zoneFrame = document.getElementById('zoneFrame');
+const searchBar = document.getElementById('searchBar');
+const sortOptions = document.getElementById('sortOptions');
+const filterOptions = document.getElementById('filterOptions');
+
+const zonesurls = [
+  "https://cdn.jsdelivr.net/gh/freebuisness/assets@main/zones.json",
+  "https://cdn.jsdelivr.net/gh/freebuisness/assets@latest/zones.json",
+  "https://cdn.jsdelivr.net/gh/freebuisness/assets@master/zones.json",
+  "https://cdn.jsdelivr.net/gh/freebuisness/assets/zones.json"
+];
+let zonesURL = zonesurls[Math.floor(Math.random() * zonesurls.length)];
+const coverURL = "https://cdn.jsdelivr.net/gh/freebuisness/covers@main";
+const htmlURL  = "https://cdn.jsdelivr.net/gh/freebuisness/html@main";
+let zones = [];
+let popularityData = {};
+const featuredContainer = document.getElementById('featuredZones');
+
+function toTitleCase(str) {
+  return str.replace(/\w\S*/g, t => t.charAt(0).toUpperCase() + t.substring(1).toLowerCase());
+}
+
+async function listZones() {
+  try {
+    let sha;
+    try {
+      const r = await fetch("https://api.github.com/repos/freebuisness/assets/commits?t=" + Date.now());
+      if (r.status === 200) {
+        const j = await r.json();
+        sha = j[0]?.sha;
+        if (sha) zonesURL = `https://cdn.jsdelivr.net/gh/freebuisness/assets@${sha}/zones.json`;
+      }
+    } catch(e) {
+      try {
+        const r2 = await fetch("https://raw.githubusercontent.com/freebuisness/xml/refs/heads/main/sha.txt?t=" + Date.now());
+        if (r2.status === 200) {
+          sha = (await r2.text()).trim();
+          if (sha) zonesURL = `https://cdn.jsdelivr.net/gh/freebuisness/assets@${sha}/zones.json`;
+        }
+      } catch(e2) {}
+    }
+
+    const response = await fetch(zonesURL + "?t=" + Date.now());
+    const json = await response.json();
+    zones = json;
+    zones[0].featured = true;
+
+    await Promise.all([
+      fetchPopularity("year"), fetchPopularity("month"),
+      fetchPopularity("week"), fetchPopularity("day")
+    ]);
+    sortZones();
+
+    try {
+      const search = new URLSearchParams(window.location.search);
+      const id = search.get('id');
+      if (id) {
+        const zone = zones.find(z => z.id + '' == id + '');
+        if (zone) openZone(zone);
+      }
+    } catch(e) {}
+
+    let alltags = [];
+    for (const obj of json) {
+      if (Array.isArray(obj.special)) alltags.push(...obj.special);
+    }
+    alltags = [...new Set(alltags)];
+    const fo = document.getElementById("filterOptions");
+    while (fo.children.length > 1) fo.removeChild(fo.lastElementChild);
+    for (const tag of alltags) {
+      const opt = document.createElement("option");
+      opt.value = tag;
+      opt.textContent = toTitleCase(tag);
+      fo.appendChild(opt);
+    }
+  } catch(error) {
+    console.error(error);
+    container.innerHTML = `<p style="color:rgba(255,255,255,0.4);padding:20px;">Failed to load games. Try refreshing.</p>`;
+  }
+}
+
+async function fetchPopularity(duration) {
+  try {
+    if (!popularityData[duration]) popularityData[duration] = {};
+    const r = await fetch("https://data.jsdelivr.com/v1/stats/packages/gh/freebuisness/html@main/files?period=" + duration);
+    const data = await r.json();
+    data.forEach(file => {
+      const m = file.name.match(/\/(\d+)\.html$/);
+      if (m) popularityData[duration][parseInt(m[1])] = file.hits?.total ?? 0;
+    });
+  } catch(e) {
+    if (!popularityData[duration]) popularityData[duration] = {};
+  }
+}
+
+function sortZones() {
+  const s = sortOptions.value;
+  if (s === 'name')           zones.sort((a,b) => a.name.localeCompare(b.name));
+  else if (s === 'id')        zones.sort((a,b) => a.id - b.id);
+  else if (s === 'popular')   zones.sort((a,b) => ((popularityData.year?.[b.id])??0) - ((popularityData.year?.[a.id])??0));
+  else if (s === 'trendingMonth') zones.sort((a,b) => ((popularityData.month?.[b.id])??0) - ((popularityData.month?.[a.id])??0));
+  else if (s === 'trendingWeek')  zones.sort((a,b) => ((popularityData.week?.[b.id])??0) - ((popularityData.week?.[a.id])??0));
+  else if (s === 'trendingDay')   zones.sort((a,b) => ((popularityData.day?.[b.id])??0) - ((popularityData.day?.[a.id])??0));
+  zones.sort((a,b) => a.id === -1 ? -1 : b.id === -1 ? 1 : 0);
+  if (featuredContainer.innerHTML === "") displayFeaturedZones(zones.filter(z => z.featured));
+  displayZones(zones);
+}
+
+function makeCard(file) {
+  const item = document.createElement("div");
+  item.className = "zone-item";
+  item.onclick = () => openZone(file);
+  const img = document.createElement("img");
+  img.dataset.src = file.cover.replace("{COVER_URL}", coverURL).replace("{HTML_URL}", htmlURL);
+  img.alt = file.name;
+  img.loading = "lazy";
+  img.className = "lazy-zone-img";
+  item.appendChild(img);
+  const btn = document.createElement("button");
+  btn.textContent = file.name;
+  btn.onclick = e => { e.stopPropagation(); openZone(file); };
+  item.appendChild(btn);
+  return item;
+}
+
+function setupLazyLoad(selector) {
+  const imgs = document.querySelectorAll(selector + ' img.lazy-zone-img');
+  const obs = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        img.src = img.dataset.src;
+        img.classList.remove("lazy-zone-img");
+        observer.unobserve(img);
+      }
+    });
+  }, { rootMargin: "100px", threshold: 0.1 });
+  imgs.forEach(img => obs.observe(img));
+}
+
+function displayFeaturedZones(featured) {
+  featuredContainer.innerHTML = "";
+  featured.forEach(f => featuredContainer.appendChild(makeCard(f)));
+  if (featuredContainer.innerHTML === "") {
+    featuredContainer.innerHTML = "No featured games.";
+  } else {
+    document.getElementById("allZonesSummary").textContent = `Featured Games (${featured.length})`;
+  }
+  setupLazyLoad('#featuredZones');
+}
+
+function displayZones(list) {
+  container.innerHTML = "";
+  list.forEach(f => container.appendChild(makeCard(f)));
+  if (container.innerHTML === "") {
+    container.innerHTML = "No games found.";
+  } else {
+    document.getElementById("allSummary").textContent = `All Games (${list.length})`;
+  }
+  setupLazyLoad('#container');
+}
+
+function filterZones2() {
+  const q = filterOptions.value;
+  if (q === "none") { displayZones(zones); return; }
+  if (q.length) document.getElementById("featuredZonesWrapper").removeAttribute("open");
+  displayZones(zones.filter(z => z.special?.includes(q)));
+}
+
+function filterZones() {
+  const q = searchBar.value.toLowerCase();
+  if (q.length) document.getElementById("featuredZonesWrapper").removeAttribute("open");
+  displayZones(zones.filter(z => z.name.toLowerCase().includes(q)));
+}
+
+function openZone(file) {
+  if (file.url.startsWith("http")) {
+    // Open in iframe instead of new tab
+    document.getElementById('zoneName').textContent = file.name;
+    document.getElementById('zoneId').textContent = file.id;
+    const author = document.getElementById('zoneAuthor');
+    author.textContent = file.author ? "by " + file.author : "";
+    if (file.authorLink) author.href = file.authorLink;
+    zoneFrame.src = file.url;
+    zoneViewer.style.display = "flex";
+    return;
+  }
+  const url = file.url.replace("{COVER_URL}", coverURL).replace("{HTML_URL}", htmlURL);
+  fetch(url + "?t=" + Date.now())
+    .then(r => r.text())
+    .then(html => {
+      if (!zoneFrame.contentDocument) {
+        zoneFrame = document.createElement("iframe");
+        zoneFrame.id = "zoneFrame";
+        zoneViewer.appendChild(zoneFrame);
+      }
+      // Strip ad/tracking scripts before writing to iframe
+      const AD_DOMAINS = ['aclib','googletagmanager','eduplace','breadisgay','invoke.js','gtag','adsbygoogle','popads','exoclick','propellerads'];
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      doc.querySelectorAll('script').forEach(s => {
+        const src = s.src || s.textContent || '';
+        if (AD_DOMAINS.some(d => src.includes(d))) s.remove();
+      });
+      const cleanHtml = doc.documentElement.outerHTML;
+      zoneFrame.contentDocument.open();
+      zoneFrame.contentDocument.write(cleanHtml);
+      zoneFrame.contentDocument.close();
+      document.getElementById('zoneName').textContent = file.name;
+      document.getElementById('zoneId').textContent = file.id;
+      const author = document.getElementById('zoneAuthor');
+      author.textContent = file.author ? "by " + file.author : "";
+      if (file.authorLink) author.href = file.authorLink;
+      zoneViewer.style.display = "flex";
+      try {
+        const u = new URL(window.location);
+        u.searchParams.set('id', file.id);
+        history.pushState(null, '', u.toString());
+      } catch(e) {}
+    })
+    .catch(e => alert("Failed to load game: " + e));
+}
+
+function aboutBlank() {
+  const w = window.open("about:blank", "_blank");
+  const id = document.getElementById('zoneId').textContent;
+  const zone = zones.find(z => z.id + '' === id);
+  if (!zone) return;
+  fetch(zone.url.replace("{HTML_URL}", htmlURL) + "?t=" + Date.now())
+    .then(r => r.text())
+    .then(html => { if (w) { w.document.open(); w.document.write(html); w.document.close(); } });
+}
+
+function closeZone() {
+  zoneViewer.style.display = "none";
+  if (zoneFrame.parentNode === zoneViewer) zoneViewer.removeChild(zoneFrame);
+  try {
+    const u = new URL(window.location);
+    u.searchParams.delete('id');
+    history.pushState(null, '', u.toString());
+  } catch(e) {}
+}
+
+function fullscreenZone() {
+  const el = zoneFrame;
+  (el.requestFullscreen || el.mozRequestFullScreen || el.webkitRequestFullscreen || el.msRequestFullscreen)?.call(el);
+}
+
+function darkMode() { document.body.classList.toggle("dark-mode"); }
+
+function tabCloak() {
+  closePopup();
+  document.getElementById('popupTitle').textContent = "Tab Cloak";
+  document.getElementById('popupBody').innerHTML = `
+    <label style="font-weight:bold;display:block;margin-bottom:6px;">Tab Title:</label>
+    <input type="text" placeholder="Enter tab name..." oninput="document.title=this.value||'Games'">
+    <label style="font-weight:bold;display:block;margin-bottom:6px;margin-top:12px;">Tab Icon URL:</label>
+    <input type="text" placeholder="Enter icon URL..." oninput="
+      const l=document.querySelector('link[rel*=icon]');
+      if(l) l.href=this.value||'favicon.png';
+    ">
+  `;
+  document.getElementById('popupOverlay').style.display = "flex";
+}
+
+document.getElementById('settings').addEventListener('click', () => {
+  document.getElementById('popupTitle').textContent = "Settings";
+  document.getElementById('popupBody').innerHTML = `
+    <button class="settings-button" onclick="darkMode()">Toggle Dark Mode</button>
+    <button class="settings-button" onclick="tabCloak()">Tab Cloak</button>
+  `;
+  document.getElementById('popupOverlay').style.display = "flex";
+});
+
+function loadDMCA() {
+  document.getElementById('popupTitle').textContent = "DMCA";
+  document.getElementById('popupBody').innerHTML = `
+    <p>If you own a game listed here and want it removed, contact the gn-math team:</p>
+    <ul>
+      <li>Discord: <a href="https://discord.gg/D4c9VFYWyU" target="_blank" style="color:#ff6b6b;">discord.gg/D4c9VFYWyU</a></li>
+      <li>Email: <a href="mailto:gn.math.business@gmail.com" style="color:#ff6b6b;">gn.math.business@gmail.com</a></li>
+    </ul>
+  `;
+  document.getElementById('popupOverlay').style.display = "flex";
+}
+
+let _allStatsCache = null;
+async function getAllStats() {
+  if (_allStatsCache) return _allStatsCache;
+  const BASE = "https://data.jsdelivr.com/v1/stats/packages/gh/freebuisness/html@main/files";
+  let page = 1, done = false;
+  const map = Object.create(null);
+  while (!done) {
+    const pages = Array.from({length:5},(_,i)=>page+i);
+    const responses = await Promise.all(pages.map(p =>
+      fetch(`${BASE}?period=year&page=${p}&limit=100`).then(r=>r.ok?r.json():[])
+    ));
+    for (const data of responses) {
+      if (!Array.isArray(data) || !data.length) { done=true; break; }
+      for (const item of data) {
+        if (!item?.name) continue;
+        const m = item.name.match(/^\/(\d+)([.-])/);
+        if (!m) continue;
+        const id = m[1];
+        if (!map[id]) map[id] = { hits:0, bandwidth:0 };
+        map[id].hits += item.hits?.total ?? 0;
+        map[id].bandwidth += item.bandwidth?.total ?? 0;
+      }
+    }
+    page += 5;
+  }
+  _allStatsCache = map;
+  return map;
+}
+
+function showZoneInfo() {
+  const id = Number(document.getElementById('zoneId').textContent);
+  document.getElementById('popupTitle').textContent = "Game Info";
+  document.getElementById('popupBody').innerHTML = "<p>Loading...</p>";
+  document.getElementById('popupOverlay').style.display = "flex";
+  fetch(`https://api.github.com/repos/freebuisness/html/commits?path=${id}.html`)
+    .then(r=>r.json())
+    .then(async json => {
+      const stats = (await getAllStats())[String(id)]?.hits ?? 0;
+      const info = zones.find(z=>z.id===id);
+      const date = new Intl.DateTimeFormat("en-US",{month:"long",day:"numeric",year:"numeric"})
+        .format(new Date(json.at(-1).commit.author.date));
+      document.getElementById('popupTitle').textContent = info?.name + " Info";
+      document.getElementById('popupBody').innerHTML = `
+        <p>
+          <b>Name:</b> ${info?.name}<br>
+          ${info?.author?`<b>Author:</b> ${info.author}<br>`:""}
+          ${info?.special?`<b>Tags:</b> ${info.special}<br>`:""}
+          <b>Date Added:</b> ${date}<br>
+          <b>Times Played:</b> ${Number(stats).toLocaleString("en-US")}
+        </p>`;
+    });
+}
+
+function closePopup() { document.getElementById('popupOverlay').style.display = "none"; }
+
+HTMLCanvasElement.prototype.toDataURL = function() { return ""; };
+
+listZones();
+  </script>
+<script>
+// Block all popup/ad windows
+(function() {
+  const _orig = window.open.bind(window);
+  window.open = function(url, t, f) {
+    if (!url || url === "about:blank" || url === "") return _orig(url, t, f);
+    return null;
+  };
+})();
+</script>
+</body>
+</html>
